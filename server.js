@@ -9,7 +9,7 @@ app.use(express.json());
 let dataStore = {};
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'operational', timestamp: new Date().toISOString(), version: 'v2.0.0' });
+  res.json({ status: 'operational', timestamp: new Date().toISOString(), version: 'v2.0.1' });
 });
 
 app.get('/api/metrics', (req, res) => {
@@ -26,4 +26,4 @@ app.get('/api/data/:key', (req, res) => {
   res.json({ key: req.params.key, value: dataStore[req.params.key] || null });
 });
 
-app.listen(PORT, () => console.log(`TCC Sovereignty Backend v2 running on port ${PORT}`));
+app.listen(PORT, () => console.log(`TCC Sovereignty Backend v2.1 running on port ${PORT}`));
