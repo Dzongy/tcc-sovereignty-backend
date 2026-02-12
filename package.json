@@ -1,25 +1,7 @@
 {
   "name": "tcc-sovereignty-backend",
   "version": "2.0.0",
-  "description": "TCC Sovereignty Backend API - Command Center v2.0",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2"
-  },
-  "keywords": [
-    "tcc",
-    "sovereignty",
-    "api",
-    "backend",
-    "zenith"
-  ],
-  "author": "Czongy",
-  "license": "MIT"
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.18.2", "cors": "^2.8.5" }
 }
