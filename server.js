@@ -12,7 +12,7 @@ let commandQueue = [];
 let completedCommands = [];
 let commandIdCounter = 0;
 
-// CORS - all origins
+// CORS- all origins
 app.use(cors());
 
 app.use(express.json());
@@ -81,43 +81,42 @@ app.get('/api/queue/next', (req, res) => {
   res.json({ command: next });
 });
 
-// Complete command (bridge reeports back)
-app.post('/api/queue/:id/complete', (req, res) => {
-  const id = parseInt(req.params.id);
-  const { result, error } = req.body;
+// Complete command (bridge reports result)
+app.post('/api/complete', (req, res) => {
+  const { id, result, error } = req.body;
   
-  const index = commandQueue.findIndex(c => c.id === id && c.status === "processing");
-  
-  if (index === -1) {
-    return res.status(404).json({ error: 'Command not found or already completed' });
+  if (!id) {
+    return res.status(400).json({ error: 'Command ID required' });
   }
   
-  const completed = commandQueue.splice(index, 1)[0];
-  completed.status = error ? "failed" : "completed";
-  completed.result = result || null;
-  completed.error = error || null;
-  completed.completedAt = new Date().toISOString();
-  
-  completedCommands.push(completed);
-  
-  // Keep only last 100 completed commands
-  if (completedCommands.length > 100) {
-    completedCommands = completedCommands.slice(-100);
+  const command = completedCommands.find(c => c.id === id);
+  if (!command) {
+    completedCommands.push({
+      id,
+      result,* // Bridge response
+      error,
+      completedAt: new Date().toISOString()
+    });
   }
   
-  res.json({ success: true, id });
+  res.json({ success: true });
 });
 
-// Error handling
-middleware(app.get('*'), (req, res) => {
-  res.status(404).json({ error: 'Not found' });
+// Get completed commands
+app.get('/api/completed', (req, res) => {
+  res.json({
+    commands: completedCommands.slice(-100),
+    count: completedCommands.length
+  });
 });
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+// Clear completed commands
+app.post('/api/clear', (req, res) => {
+  completedCommands = [];
+  res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-  console.log(`TCC Sovereignty Backend v2.0 running on port ${PORT}`);
+// Start server - bind to 0.0.0.0 for Render
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`TCC Sovereignty Backend v2.0.0 running on port ${PORT}`);
 });
